@@ -8,15 +8,22 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(sf)
+library(tmap)
+library(leaflet)
 ```
 
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart A
+### Mapa de distribución
 
-```{r}
+```{r echo=FALSE}
+mammalia = st_read("https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos/master/biodiversidad/presencia/mammalia.geojson")
+map_mammalia = tm_shape(mammalia) + tm_dots()
 
+tmap_mode("view")
+map_mammalia
 ```
 
 Column {data-width=350}
