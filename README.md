@@ -1,5 +1,6 @@
 # Tablero de control (_dashboard_) del Atlas
 
-```r
+Preparativos:
+```
 install.packages("flexdashboard")
 ```
