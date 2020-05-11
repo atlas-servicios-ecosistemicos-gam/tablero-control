@@ -1,0 +1,61 @@
+---
+title: "Atlas de servicios ecosistémicos de espacios verdes en la GAM - Mamíferos"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(sf)
+library(tmap)
+library(leaflet)
+library(knitr)
+library(kableExtra)
+
+mammalia = st_read("https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos/master/biodiversidad/presencia/mammalia.geojson")
+map_mammalia = tm_shape(mammalia) + tm_dots()
+```
+
+Column {data-width=550}
+-----------------------------------------------------------------------
+
+### Mapa de distribución
+```{r}
+tmap_mode("view")
+map_mammalia
+```
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+### Registros de presencia de especies
+```{r}
+valueBox(nrow(mammalia), icon = "fa-pencil")
+```
+
+### Especies
+```{r}
+valueBox(length(unique(mammalia[["species"]])), icon = "fa-pencil")
+```
+
+### Registros de presencia de especies
+```{r}
+# Se extraen las observaciones ordenadas por orden alfabético de especies
+mammalia.orden <- order(mammalia$species)
+
+# Se genera un nuevo data frame ordenado
+mammalia.ordenadoxespecie <- mammalia[mammalia.orden,]
+
+# Se formatea la tabla con el nuevo data frame
+kable(
+  mammalia.ordenadoxespecie[, c("species","genus","family","order","year")], 
+) %>%
+kable_styling() %>%
+scroll_box(
+  width = "600px", 
+  height = "250px", 
+  fixed_thead = TRUE
+)
+```
