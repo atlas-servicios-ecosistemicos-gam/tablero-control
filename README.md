@@ -1,2 +1,5 @@
-# tablero-control
-Tablero de control (dashboard) del Atlas
+# Tablero de control (_dashboard_) del Atlas
+
+```R
+install.packages("flexdashboard")
+```
