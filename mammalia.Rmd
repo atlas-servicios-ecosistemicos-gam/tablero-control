@@ -7,6 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(ggplot2)
 library(flexdashboard)
 library(sf)
 library(tmap)
@@ -15,7 +16,6 @@ library(knitr)
 library(kableExtra)
 
 mammalia = st_read("https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos/master/biodiversidad/presencia/mammalia.geojson")
-map_mammalia = tm_shape(mammalia) + tm_dots()
 
 table_mammalia_spp_count = table(mammalia$species)
 df_mammalia_spp_count = as.data.frame(table_mammalia_spp_count)
@@ -34,8 +34,23 @@ Column {data-width=550}
 
 ### Mapa de distribución
 ```{r}
-tmap_mode("view")
-map_mammalia
+# tmap_mode("view")
+# map_mammalia
+leaflet() %>% 
+  addProviderTiles(providers$Esri.WorldImagery, group = "Imágenes de ESRI") %>% 
+  addProviderTiles(providers$Stamen.TonerLite, group = "Stamen Toner Lite") %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik, group = "OpenStreetMap") %>%
+  addCircleMarkers(data = mammalia,
+                   stroke = F,
+                   radius = 4,
+                   fillColor = 'red',
+                   fillOpacity = 1,
+                   popup = paste(mammalia$order, mammalia$species, sep = '<br/>')) %>%
+  addLayersControl(baseGroups = c("OpenStreetMap", "Stamen Toner Lite", "Imágenes de ESRI")) %>%
+  addMiniMap(
+    toggleDisplay = TRUE,
+    tiles = providers$Stamen.TonerLite
+  )
 ```
 
 Column {data-width=450}
@@ -71,11 +86,18 @@ scroll_box(
 )
 ```
 
-### Especies más frecuentes
+### Especies más registradas
 ```{r}
-barplot(
-  height=df_mammalia_spp_count.order.freq$Freq, 
-  names.arg=df_mammalia_spp_count.order.freq$Var1,
-  xlim = c( 0 , 10 )
-)
+#barplot(
+#  height=df_mammalia_spp_count.order.freq$Freq, 
+#  names.arg=df_mammalia_spp_count.order.freq$Var1,
+#  xlim = c( 0 , 10 )
+#)
+
+ggplot(df_mammalia_spp_count[1:4,], aes(x=reorder(Var1, -Freq), y=Freq)) +
+  xlab("Especies") + 
+  ylab("Frecuencia") +  
+  geom_col() +
+  geom_text(aes(label=Freq), vjust=-0.3, size=3.5)
+
 ```
