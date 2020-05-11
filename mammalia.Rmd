@@ -16,6 +16,17 @@ library(kableExtra)
 
 mammalia = st_read("https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos/master/biodiversidad/presencia/mammalia.geojson")
 map_mammalia = tm_shape(mammalia) + tm_dots()
+
+table_mammalia_spp_count = table(mammalia$species)
+df_mammalia_spp_count = as.data.frame(table_mammalia_spp_count)
+
+# Se extraen las especies ordenadas por frecuencia
+df_mammalia_spp_count.order <- order(df_mammalia_spp_count$Freq, decreasing=TRUE)
+
+# Se genera un nuevo data frame ordenado
+df_mammalia_spp_count.order.freq <- df_mammalia_spp_count[df_mammalia_spp_count.order,]
+
+
 ```
 
 Column {data-width=550}
@@ -57,5 +68,14 @@ scroll_box(
   width = "600px", 
   height = "250px", 
   fixed_thead = TRUE
+)
+```
+
+### Especies más frecuentes
+```{r}
+barplot(
+  height=df_mammalia_spp_count.order.freq$Freq, 
+  names.arg=df_mammalia_spp_count.order.freq$Var1,
+  xlim = c( 0 , 10 )
 )
 ```
